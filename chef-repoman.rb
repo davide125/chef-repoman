@@ -5,7 +5,7 @@ require 'optparse'
 require 'pp'
 require 'yaml'
 
-class ChefRepo
+class ChefRepoman
   def initialize(conffile)
     File.open(conffile, 'r') do |f|
       @config = YAML.load(f.read())
@@ -204,29 +204,29 @@ unless subcommands.include?(command)
   exit 1
 end
 
-chefrepo = ChefRepo.new(options['config'])
+repoman = ChefRepoman.new(options['config'])
 
 case command
 when 'gen_client_rb'
-  chefrepo.gen_client_rb
+  repoman.gen_client_rb
 when 'get_repo'
   repo = ARGV.shift
-  pp chefrepo.get_repo(repo)
+  pp repoman.get_repo(repo)
 when 'get_key'
   key = ARGV.shift
-  pp chefrepo.get_key(key)
+  pp repoman.get_key(key)
 when 'list_repos'
-  puts chefrepo.get_config['repos'].keys
+  puts repoman.get_config['repos'].keys
 when 'list_keys'
-  puts chefrepo.get_config['keys'].keys
+  puts repoman.get_config['keys'].keys
 when 'update_repo'
   repo = ARGV.shift
   puts "Updating #{repo}"
-  chefrepo.update_repo(repo)
+  repoman.update_repo(repo)
 when 'update'
-  chefrepo.get_config['repos'].keys.each do |repo|
+  repoman.get_config['repos'].keys.each do |repo|
     puts "Updating #{repo}"
-    chefrepo.update_repo(repo)
+    repoman.update_repo(repo)
   end
 else
   puts "I don't know what to do"
