@@ -2,6 +2,7 @@
 
 require 'mixlib/shellout'
 require 'optparse'
+require 'pp'
 require 'yaml'
 
 class ChefRepo
@@ -152,6 +153,7 @@ subcommands = [
   'list_repos',
   'list_keys',
   'update_repo',
+  'update',
 ]
 
 parser.parse!
@@ -170,17 +172,23 @@ chefrepo = ChefRepo.new(options['config'])
 case command
 when 'get_repo'
   repo = ARGV.shift
-  puts chefrepo.get_repo(repo)
+  pp chefrepo.get_repo(repo)
 when 'get_key'
   key = ARGV.shift
-  puts chefrepo.get_key(key)
+  pp chefrepo.get_key(key)
 when 'list_repos'
   puts chefrepo.get_config['repos'].keys
 when 'list_keys'
   puts chefrepo.get_config['keys'].keys
 when 'update_repo'
   repo = ARGV.shift
-  puts chefrepo.update_repo(repo)
+  puts "Updating #{repo}"
+  chefrepo.update_repo(repo)
+when 'update'
+  chefrepo.get_config['repos'].keys.each do |repo|
+    puts "Updating #{repo}"
+    chefrepo.update_repo(repo)
+  end
 else
   puts "I don't know what to do"
   exit 1
