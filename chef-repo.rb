@@ -22,6 +22,39 @@ class ChefRepo
     @config['globals'] = globals
   end
 
+  def gen_client_rb
+    chefdir = @config['globals']['chefdir']
+    client_rb_path = "#{chefdir}/client.rb"
+    if File.exists?(client_rb_path)
+      puts "Refusing to clobber #{client_rb_path} as it already exists"
+      exit 1
+    end
+    cookbook_paths = []
+    role_path = nil
+    @config['repos'].keys.each do |r|
+      repo = get_repo(r)
+      if File.directory?("#{repo['path']}/cookbooks")
+        cookbook_paths << "#{repo['path']}/cookbooks"
+      end
+      if repo['is_primary_repo'] && File.directory?("#{repo['path']}/roles")
+        role_path = "#{repo['path']}/roles"
+      end
+    end
+    
+    if cookbook_paths && role_path
+      unless File.directory?(chefdir)
+        Dir.mkdir(chefdir, 0755)
+      end
+      client_rb = "cookbook_path #{cookbook_paths}\nrole_path '#{role_path}'"
+      File.open(client_rb_path, 'w', 0644) do |f|
+        f.write(client_rb)
+      end
+    else
+      puts 'Not enough data to write client.rb'
+      exit 1
+    end
+  end
+
   def get_config
     return @config
   end
@@ -67,6 +100,9 @@ class ChefRepo
       else
         repo['type'] = 'hg'
       end
+    end
+    unless repo['is_primary_repo']
+      repo['is_primary_repo'] = false
     end
     unless repo['path']
       repodir = @config['globals']['repodir']
@@ -148,6 +184,7 @@ parser = OptionParser.new do |opts|
 end
 
 subcommands = [
+  'gen_client_rb',
   'get_repo',
   'get_key',
   'list_repos',
@@ -170,6 +207,8 @@ end
 chefrepo = ChefRepo.new(options['config'])
 
 case command
+when 'gen_client_rb'
+  chefrepo.gen_client_rb
 when 'get_repo'
   repo = ARGV.shift
   pp chefrepo.get_repo(repo)
