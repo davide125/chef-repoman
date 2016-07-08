@@ -1,4 +1,7 @@
 # chef-repoman
+
+[![Build Status](https://travis-ci.org/davide125/chef-repoman.svg)](https://travis-ci.org/davide125/chef-repoman)
+
 A tool to wrangle multiple Chef repositories
 
 ## Get started

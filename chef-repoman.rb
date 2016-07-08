@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
+#
+# Copyright (c) 2016-present, Davide Cavalca
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
 
 require 'mixlib/shellout'
 require 'optparse'
@@ -8,9 +14,9 @@ require 'yaml'
 class ChefRepoman
   def initialize(conffile)
     File.open(conffile, 'r') do |f|
-      @config = YAML.load(f.read())
+      @config = YAML.load(f.read)
     end
-    
+
     globals = {
       'chefdir' => '/etc/chef',
       'repodir' => '/var/chef/repos',
@@ -41,7 +47,7 @@ class ChefRepoman
         role_path = "#{repo['path']}/roles"
       end
     end
-    
+
     if cookbook_paths && role_path
       unless File.directory?(chefdir)
         Dir.mkdir(chefdir, 0755)
@@ -64,14 +70,14 @@ class ChefRepoman
     key = @config['keys'][name]
     unless key
       return nil
-    end  
+    end
 
     unless key['name']
       key['name'] = name
     end
     if key['path']
       File.open(key['path'], 'r') do |f|
-        key['key'] = f.read()
+        key['key'] = f.read
       end
     else
       keysdir = @config['globals']['keysdir']
@@ -102,10 +108,10 @@ class ChefRepoman
         repo['type'] = 'hg'
       end
     end
-    unless repo.has_key?('is_primary_repo')
+    unless repo.key?('is_primary_repo')
       repo['is_primary_repo'] = false
     end
-    unless repo.has_key?('is_chef_repo')
+    unless repo.key?('is_chef_repo')
       repo['is_chef_repo'] = true
     end
     unless repo['path']
@@ -121,24 +127,26 @@ class ChefRepoman
         repo['key_path'] = key['path']
       end
     end
-    
+
     return repo
   end
 
   def update_repo(name)
     repo = get_repo(name)
     sshcmd = repo['key_path'] ? "ssh -i #{repo['key_path']}" : ''
-    sshopts = sshcmd ? "-e '#{sshcmd}'" : ''
+    sshopts = ''
+    sshenv = {}
+    unless sshcmd.empty?
+      sshopts = "-e '#{sshcmd}'"
+      sshenv['GIT_SSH'] = sshcmd
+    end
 
     if File.directory?(repo['path'])
       case repo['type']
       when 'git'
-        cmd = Mixlib::ShellOut.new(
-          'git pull',
-          :cwd => repo['path'],
-          :environment => {
-            'GIT_SSH' => sshcmd,
-        })
+        cmd = Mixlib::ShellOut.new('git pull',
+                                   :cwd => repo['path'],
+                                   :environment => sshenv)
         cmd.run_command
         cmd.error!
       when 'hg'
@@ -153,16 +161,14 @@ class ChefRepoman
     else
       case repo['type']
       when 'git'
-        cmd = Mixlib::ShellOut.new(
-          "git clone #{repo['url']} #{repo['path']}",
-          :environment => {
-            'GIT_SSH' => sshcmd,
-        })
+        cmd = Mixlib::ShellOut.new("git clone #{repo['url']} #{repo['path']}",
+                                   :environment => sshenv)
         cmd.run_command
         cmd.error!
       when 'hg'
         cmd = Mixlib::ShellOut.new(
-          "hg clone #{sshopts} #{repo['url']} #{repo['path']}")
+          "hg clone #{sshopts} #{repo['url']} #{repo['path']}",
+        )
         cmd.run_command
         cmd.error!
       else
@@ -236,9 +242,9 @@ when 'update_repo'
   puts "Updating #{repo}"
   repoman.update_repo(repo)
 when 'update'
-  repoman.get_config['repos'].keys.each do |repo|
-    puts "Updating #{repo}"
-    repoman.update_repo(repo)
+  repoman.get_config['repos'].keys.each do |r|
+    puts "Updating #{r}"
+    repoman.update_repo(r)
   end
 else
   puts "I don't know what to do"

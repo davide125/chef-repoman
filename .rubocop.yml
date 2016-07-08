@@ -1,0 +1,122 @@
+#
+# Disabled rules
+#
+
+Encoding:
+  Enabled: false
+
+NumericLiterals:
+  Enabled: false
+
+MultilineTernaryOperator:
+  Enabled: false
+
+ModuleLength:
+  Enabled: false
+
+MethodLength:
+  Enabled: false
+
+ClassLength:
+  Enabled: false
+
+CyclomaticComplexity:
+  Enabled: false
+
+Next:
+  Enabled: false
+
+GuardClause:
+  Enabled: false
+
+AbcSize:
+  Enabled: false
+
+IfUnlessModifier:
+  Enabled: false
+
+PerlBackrefs:
+  Enabled: false
+
+BlockNesting:
+  Enabled: false
+
+BracesAroundHashParameters:
+  Enabled: false
+
+WordArray:
+  Enabled: false
+
+RedundantReturn:
+  Enabled: false
+
+RedundantSelf:
+  Enabled: false
+
+CommentAnnotation:
+  Enabled: false
+
+AccessorMethodName:
+  Enabled: false
+
+LineEndConcatenation:
+  Enabled: false
+
+PercentLiteralDelimiters:
+  Enabled: false
+
+DeprecatedClassMethods:
+  Enabled: false
+
+FileName:
+  Enabled: false
+
+PerceivedComplexity:
+  Enabled: false
+
+TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+
+TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+UnneededDisable:
+  Enabled: false
+
+MultilineOperationIndentation:
+  Enabled: false
+
+Performance/RedundantMatch:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Performance/TimesMap:
+  Enabled: false
+
+Performance/RedundantMerge:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/IndentArray:
+  EnforcedStyle: consistent
+#
+# Modified rules
+#
+LineLength:
+  Max: 80
+
+DotPosition:
+  EnforcedStyle: trailing
+
+HashSyntax:
+  EnforcedStyle: hash_rockets
+
+Style/Documentation:
+  Enabled: false
+
+Style/NumericLiteralPrefix:
+  Enabled: false
