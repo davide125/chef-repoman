@@ -33,6 +33,7 @@ class ChefRepoman
     role_path = nil
     @config['repos'].keys.each do |r|
       repo = get_repo(r)
+      next unless repo['is_chef_repo']
       if File.directory?("#{repo['path']}/cookbooks")
         cookbook_paths << "#{repo['path']}/cookbooks"
       end
@@ -101,8 +102,11 @@ class ChefRepoman
         repo['type'] = 'hg'
       end
     end
-    unless repo['is_primary_repo']
+    unless repo.has_key?('is_primary_repo')
       repo['is_primary_repo'] = false
+    end
+    unless repo.has_key?('is_chef_repo')
+      repo['is_chef_repo'] = true
     end
     unless repo['path']
       repodir = @config['globals']['repodir']
@@ -189,6 +193,7 @@ subcommands = [
   'get_key',
   'list_repos',
   'list_keys',
+  'update_chef',
   'update_repo',
   'update',
 ]
@@ -219,6 +224,13 @@ when 'list_repos'
   puts repoman.get_config['repos'].keys
 when 'list_keys'
   puts repoman.get_config['keys'].keys
+when 'update_chef'
+  repoman.get_config['repos'].keys.each do |r|
+    repo = repoman.get_repo(r)
+    next unless repo['is_chef_repo']
+    puts "Updating #{r}"
+    repoman.update_repo(r)
+  end
 when 'update_repo'
   repo = ARGV.shift
   puts "Updating #{repo}"

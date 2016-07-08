@@ -23,6 +23,7 @@ repos:
     url: ssh://hg@bitbucket.org/notarealrepo/super_secret_stuff
     key: dont-look-at-me
     path: /opt/secrets
+    is_chef_repo: false
 
 keys:
   cake-chef:
@@ -34,6 +35,8 @@ keys:
     key_path: /etc/chef/super_secret_key
 ```
 
-Then run `chef-repoman update` to lay down keys and fetch all the repos. If you need a stub `client.rb` to bootstrap Chef,
-run `chef-repoman get_client_rb` -- it'll set the `role_path` to the primary repo and automatically ignore non-cookbooks 
-repos you may have listed).
+Then run `chef-repoman update` to lay down keys and fetch all the repos. If you
+only want to fetch the Chef repos, use `chef-repoman update_chef`. If you need
+a stub `client.rb` to bootstrap Chef, run `chef-repoman get_client_rb` -- it'll
+set the `role_path` to the primary repo and automatically ignore non-cookbooks 
+repos you may have listed.
